@@ -28,11 +28,19 @@ import {
 } from "./data/caching/options";
 import { APPROACH_INFO as CACHING_INFO } from "./data/caching/approachInfo";
 
+import { QUESTIONS as DB_QS } from "./data/database/questions";
+import {
+  OPTIONS as DB_OPTS,
+  OPTIONS_LONG as DB_OPTS_LONG,
+} from "./data/database/options";
+import { APPROACH_INFO as DB_INFO } from "./data/database/approachInfo";
+
 export const QUIZ_TYPES = {
   RENDERING: "rendering",
   STYLING: "styling",
   SERVER: "server",
   CACHING: "caching",
+  DATABASE: "database",
 } as const;
 
 export type QUIZ_TYPES = (typeof QUIZ_TYPES)[keyof typeof QUIZ_TYPES];
@@ -209,9 +217,45 @@ export const CACHING_QUIZ = makeQuiz({
   approachInfo: CACHING_INFO,
 } satisfies QuizModule<typeof CACHING_OPTS>);
 
+
+export const DB_QUIZ = makeQuiz({
+  slug: "database",
+  name: "Database Guide",
+  area: "infra",
+  header: {
+    title: "Web Database Guide",
+    intro: `Answer ${DB_QS.length} quick questions to pick the right database for your app (SQL, NoSQL, or Graph).`,
+    keywords: [
+      "web database",
+      "sql",
+      "nosql",
+      "graph database",
+      "relational database",
+      "document store",
+      "key-value store",
+    ],
+  },
+  options: Object.keys(DB_OPTS_LONG).map((k) => {
+    const key = k as (typeof DB_OPTS)[number];
+    return {
+      key,
+      short: key,
+      long: DB_OPTS_LONG[key],
+    };
+  }),
+  questions: DB_QS.map((q) => ({
+    id: q.id,
+    text: q.text,
+    techText: q.techText,
+    answers: q.answers,
+  })),
+  approachInfo: DB_INFO,
+} satisfies QuizModule<typeof DB_OPTS>);
+
 export const QUIZZES = {
   [QUIZ_TYPES.RENDERING]: RENDERING_QUIZ,
   [QUIZ_TYPES.STYLING]: STYLING_QUIZ,
   [QUIZ_TYPES.SERVER]: SERVER_QUIZ,
   [QUIZ_TYPES.CACHING]: CACHING_QUIZ,
+  [QUIZ_TYPES.DATABASE]: DB_QUIZ,
 } as const;
